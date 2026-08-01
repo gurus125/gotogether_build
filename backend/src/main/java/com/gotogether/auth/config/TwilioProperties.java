@@ -12,6 +12,13 @@ import org.springframework.stereotype.Component;
  * {@code accountSid} blank/unset means Twilio was never configured, so
  * logging stays the fallback rather than the app failing to start or
  * silently sending nothing.
+ *
+ * <p>{@code verifyServiceSid} is a one-time setup artifact — Twilio Verify
+ * (see {@link com.gotogether.auth.service.TwilioOtpSender}) sends through a
+ * "Verify Service" resource, created once in the console under Verify &gt;
+ * Services (starts with {@code VA}), rather than directly off a specific
+ * phone number the way the plain Messages API this originally called did —
+ * no {@code fromNumber} property exists here for that reason.
  */
 @Component
 @ConfigurationProperties(prefix = "gotogether.twilio")
@@ -19,7 +26,7 @@ public class TwilioProperties {
 
     private String accountSid;
     private String authToken;
-    private String fromNumber;
+    private String verifyServiceSid;
 
     public String getAccountSid() {
         return accountSid;
@@ -37,11 +44,11 @@ public class TwilioProperties {
         this.authToken = authToken;
     }
 
-    public String getFromNumber() {
-        return fromNumber;
+    public String getVerifyServiceSid() {
+        return verifyServiceSid;
     }
 
-    public void setFromNumber(String fromNumber) {
-        this.fromNumber = fromNumber;
+    public void setVerifyServiceSid(String verifyServiceSid) {
+        this.verifyServiceSid = verifyServiceSid;
     }
 }

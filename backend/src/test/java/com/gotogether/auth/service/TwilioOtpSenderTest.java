@@ -32,12 +32,12 @@ class TwilioOtpSenderTest {
         properties = new TwilioProperties();
         properties.setAccountSid("ACtest123");
         properties.setAuthToken("secret-token");
-        properties.setFromNumber("+15551234567");
+        properties.setVerifyServiceSid("VAtest456");
         sender = new TwilioOtpSender(properties, httpClient);
     }
 
     @Test
-    void postsToTheAccountsSpecificTwilioMessagesEndpointWithBasicAuth() throws Exception {
+    void postsToTheVerifyServiceSpecificVerificationsEndpointWithBasicAuth() throws Exception {
         when(httpResponse.statusCode()).thenReturn(201);
         when(httpClient.send(any(HttpRequest.class), any(HttpResponse.BodyHandler.class))).thenReturn(httpResponse);
 
@@ -47,7 +47,7 @@ class TwilioOtpSenderTest {
         verify(httpClient).send(captor.capture(), any(HttpResponse.BodyHandler.class));
         HttpRequest sent = captor.getValue();
 
-        assertThat(sent.uri().toString()).isEqualTo("https://api.twilio.com/2010-04-01/Accounts/ACtest123/Messages.json");
+        assertThat(sent.uri().toString()).isEqualTo("https://verify.twilio.com/v2/Services/VAtest456/Verifications");
         assertThat(sent.headers().firstValue("Content-Type")).contains("application/x-www-form-urlencoded");
         // Basic base64("ACtest123:secret-token")
         String expectedAuth = "Basic " + java.util.Base64.getEncoder()
@@ -56,7 +56,7 @@ class TwilioOtpSenderTest {
     }
 
     @Test
-    void includesTheDestinationNumberFromNumberAndCodeInTheRequestBody() throws Exception {
+    void includesTheDestinationNumberChannelAndCustomCodeInTheRequestBody() throws Exception {
         when(httpResponse.statusCode()).thenReturn(201);
         when(httpClient.send(any(HttpRequest.class), any(HttpResponse.BodyHandler.class))).thenReturn(httpResponse);
 
@@ -67,8 +67,8 @@ class TwilioOtpSenderTest {
         String body = bodyAsString(captor.getValue());
 
         assertThat(body).contains("To=%2B919876543210");
-        assertThat(body).contains("From=%2B15551234567");
-        assertThat(body).contains("654321");
+        assertThat(body).contains("Channel=sms");
+        assertThat(body).contains("CustomCode=654321");
     }
 
     @Test

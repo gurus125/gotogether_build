@@ -37,7 +37,7 @@ class OtpSenderConfigTest {
         TwilioProperties properties = new TwilioProperties();
         properties.setAccountSid("ACtest123");
         properties.setAuthToken("secret-token");
-        properties.setFromNumber("+15551234567");
+        properties.setVerifyServiceSid("VAtest456");
 
         OtpSender sender = config.otpSender(properties);
 
