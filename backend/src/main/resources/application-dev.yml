@@ -1,0 +1,25 @@
+# Local development overrides — used automatically since application.yml sets
+# spring.profiles.active=dev by default. Values here match docker-compose.yml.
+spring:
+  jpa:
+    show-sql: true
+
+logging:
+  level:
+    com.gotogether: DEBUG
+    org.hibernate.SQL: DEBUG
+    org.springframework.security: DEBUG
+
+gotogether:
+  verification:
+    # Dev-only bypass so local test accounts don't need to complete real ID
+    # verification to create trips or send join requests (Chapter 3 Section
+    # 13's rule stays enforced everywhere else — see TripService/
+    # JoinRequestService#enforceIdApproval's doc). Never set this in a
+    # non-dev profile.
+    enforce-id-approval: false
+    # Same dev-only bypass, for Verified Partner Trip creation — Operations
+    # Module A requires a real Moderator/Admin decision to reach VERIFIED,
+    # and Phase 8's admin module doesn't exist yet (see CompanyService's
+    # class doc). Never set this in a non-dev profile.
+    enforce-company-verification: false

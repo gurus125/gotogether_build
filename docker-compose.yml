@@ -1,0 +1,60 @@
+name: gotogether
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: gotogether-postgres
+    environment:
+      POSTGRES_DB: gotogether
+      POSTGRES_USER: gotogether
+      POSTGRES_PASSWORD: gotogether
+    ports:
+      # Overridable for local machines where something else already owns
+      # host port 5432 (e.g. a native Postgres install) — set
+      # POSTGRES_HOST_PORT before `docker-compose up` to use a different
+      # host port; the container's own internal port stays 5432 either way.
+      - "${POSTGRES_HOST_PORT:-5432}:5432"
+    volumes:
+      - gotogether-postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U gotogether -d gotogether"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  redis:
+    image: redis:7-alpine
+    container_name: gotogether-redis
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  # S3-compatible object storage for local dev (trip images, chat attachments,
+  # verification documents). Swap for real S3 / equivalent in staging/prod via
+  # the STORAGE_* env vars in application.yml — application code only ever
+  # talks to the S3 API, never to MinIO specifically.
+  minio:
+    image: minio/minio:latest
+    container_name: gotogether-minio
+    command: server /data --console-address ":9001"
+    environment:
+      MINIO_ROOT_USER: gotogether
+      MINIO_ROOT_PASSWORD: gotogether123
+    ports:
+      - "9000:9000"   # S3 API
+      - "9001:9001"   # Web console
+    volumes:
+      - gotogether-minio-data:/data
+    healthcheck:
+      test: ["CMD", "mc", "ready", "local"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  gotogether-postgres-data:
+  gotogether-minio-data:

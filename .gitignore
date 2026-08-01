@@ -1,0 +1,36 @@
+# --- Backend (Java / Maven) ---
+backend/target/
+*.class
+*.jar
+
+# --- Flutter / Dart ---
+mobile/.dart_tool/
+mobile/.flutter-plugins
+mobile/.flutter-plugins-dependencies
+mobile/.packages
+mobile/.pub-cache/
+mobile/.pub/
+mobile/build/
+mobile/android/.gradle
+mobile/android/local.properties
+mobile/android/**/GeneratedPluginRegistrant.java
+mobile/ios/Flutter/.last_build_id
+mobile/ios/Pods/
+mobile/ios/.symlinks/
+mobile/**/generated_plugin_registrant.dart
+
+# --- IDEs ---
+.idea/
+*.iml
+.vscode/
+
+# --- OS ---
+.DS_Store
+Thumbs.db
+
+# --- Secrets — never commit real credentials ---
+.env
+.env.local
+**/google-services.json
+**/GoogleService-Info.plist
+**/firebase-service-account*.json

@@ -1,0 +1,15 @@
+-- Adds `attendance_reminder` to the notification_type enum (V1). Needed for
+-- TripLifecycleScheduler's new organizer-facing notification: once a trip
+-- reaches Completed, the organizer is prompted to mark each member
+-- ATTENDED/NO_SHOW (PATCH /trips/{id}/members/{userId}/attendance) — a
+-- mechanism that already existed in the schema (attendance_status column,
+-- V2) but was never actually surfaced to the organizer anywhere, and whose
+-- data the Trust Score completion component didn't consume either (see
+-- MembershipService.getCompletionStats / TrustService.completionComponent's
+-- updated docs).
+--
+-- Safe to run inside Flyway's own transaction: this migration only adds the
+-- enum value, nothing in this same transaction reads or writes it (Postgres
+-- forbids using a freshly-added enum value within the transaction that added
+-- it, prior to commit).
+ALTER TYPE notification_type ADD VALUE 'attendance_reminder';
