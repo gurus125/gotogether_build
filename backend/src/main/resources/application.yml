@@ -62,6 +62,19 @@ server:
   port: ${SERVER_PORT:8081}
 
 gotogether:
+  twilio:
+    # Real SMS delivery for phone OTP (see OtpSenderConfig for exactly how
+    # this decides between TwilioOtpSender and the dev-only LoggingOtpSender
+    # fallback). Leave account-sid blank for local dev — OTP codes just get
+    # logged instead of texted, no Twilio account needed. Get real values
+    # from twilio.com/console: Account SID + Auth Token are on the console
+    # dashboard, from-number is a phone number you buy/get free on a trial
+    # account under Phone Numbers. Note: Twilio TRIAL accounts can only send
+    # to phone numbers you've manually verified in the console first — fine
+    # for a handful of known testers, not for open testing.
+    account-sid: ${TWILIO_ACCOUNT_SID:}
+    auth-token: ${TWILIO_AUTH_TOKEN:}
+    from-number: ${TWILIO_FROM_NUMBER:}
   jwt:
     # Local-dev-only default secret. MUST be overridden via env var in every real environment.
     secret: ${JWT_SECRET:dev-only-secret-change-me-before-any-shared-environment-use-32-bytes-min}
